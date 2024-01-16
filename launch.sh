@@ -15,10 +15,10 @@ yarn="build"
 yarn_start="yarn && yarn lint --fix && yarn build && php artisan migrate && php artisan view:clear && php artisan cache:clear && php artisan route:clear"
 
 reinstall_a="reinstall all"
-reinstall_a_start="rm -rf painel && rm -rf logs/panel* && rm -rf nginx && rm -rf php-fpm"
+reinstall_a_start="rm -rf panel && rm -rf logs/panel* && rm -rf nginx && rm -rf php-fpm"
 
-reinstall_p="reinstall painel"
-reinstall_p_start="rm -rf painel && rm -rf logs/panel*"
+reinstall_p="reinstall panel"
+reinstall_p_start="rm -rf panel && rm -rf logs/panel*"
 
 reinstall_n="reinstall nginx"
 reinstall_n_start="rm -rf nginx"
@@ -31,13 +31,14 @@ lightblue=$(echo -en "\e[94m")
 normal=$(echo -en "\e[0m")
 rm -rf /home/container/tmp/*
 printf "
- ______                        _      _                             _ 
-(_____ \                      | |    | |               _           | |
- _____) )  ____  ____    ____ | |  _ | |  ____   ____ | |_   _   _ | |
-|  ____/  / _  ||  _ \  / _  )| | / || | / _  | / ___)|  _) | | | || |
-| |      ( ( | || | | |( (/ / | |( (_| |( ( | |( (___ | |__ | |_| || |
-|_|       \_||_||_| |_| \____)|_| \____| \_||_| \____) \___) \__  ||_|
-                                                            (____/    
+    _____                   _     _           _____ _                 _ 
+   / ____|                 | |   (_)         / ____| |               | |
+  | (___   ____ ____  ____ | |__  _ ____ ___| |    | | ___  _   _  __| |
+   \___ \ / _  |  _ \|  _ \|  _ \| |  __/ _ \ |    | |/ _ \| | | |/ _  |
+   ____) | (_| | |_) | |_) | | | | | | |  __/ |____| | (_) | |_| | (_| |
+  |_____/ \__,_| .__/| .__/|_| |_|_|_|  \___|\_____|_|\___/ \__,_|\__,_|
+               | |   | |                                                
+               |_|   |_|                                                
 \n \n"
 echo "🟢 Starting PHP-FPM..."
 nohup /usr/sbin/php-fpm81 --fpm-config /home/container/php-fpm/php-fpm.conf --daemonize >/dev/null 2>&1 &
@@ -51,9 +52,9 @@ else
 fi
 echo "🟢 Started successfully ${MGM}..."
 echo "🟢 Starting panel worker..."
-nohup php /home/container/painel/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3 >/dev/null 2>&1 &
+nohup php /home/container/panel/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3 >/dev/null 2>&1 &
 echo "🟢 Starting cron..."
-nohup bash <(curl -s https://raw.githubusercontent.com/Ashu11-A/Ashu_eggs/main/Connect/en/Paneldactyl/cron.sh) >/dev/null 2>&1 &
+nohup bash <(curl -s https://raw.githubusercontent.com/Visipir/pterodactyl-in-panel/main/cron.sh) >/dev/null 2>&1 &
 
 echo "📃 Available Commands: ${bold}${lightblue}composer${normal}, ${bold}${lightblue}setup${normal}, ${bold}${lightblue}database${normal}, ${bold}${lightblue}migrate${normal}, ${bold}${lightblue}user${normal}, ${bold}${lightblue}build${normal}, ${bold}${lightblue}reinstall${normal}. Use ${bold}${lightblue}help${normal} for more information..."
 
@@ -76,34 +77,34 @@ while read -r line; do
     elif [[ "$line" == "composer" ]]; then
         Command1="${composer_start}"
         echo "Installing Composer packages: ${bold}${lightblue}${Command1}"
-        eval "cd /home/container/painel && $Command1 && cd .."
+        eval "cd /home/container/panel && $Command1 && cd .."
         printf "\n \n✅  Command Executed\n \n"
     elif [[ "$line" == "setup" ]]; then
 
         Command2="${setup_start}"
         echo "Setting up panel environment: ${bold}${lightblue}${Command2}"
-        eval "cd /home/container/painel && $Command2 && cd .."
+        eval "cd /home/container/panel && $Command2 && cd .."
         printf "\n \n✅  Command Executed\n \n"
 
     elif [[ "$line" == "database" ]]; then
 
         Command3="${database_start}"
         echo "Setting up database environment: ${bold}${lightblue}${Command3}"
-        eval "cd /home/container/painel && $Command3 && cd .."
+        eval "cd /home/container/panel && $Command3 && cd .."
         printf "\n \n✅  Command Executed\n \n"
 
     elif [[ "$line" == "migrate" ]]; then
 
         Command4="${migrate_start}"
         echo "Migrating the database: ${bold}${lightblue}${Command4}"
-        eval "cd /home/container/painel && $Command4 && cd .."
+        eval "cd /home/container/panel && $Command4 && cd .."
         printf "\n \n✅  Command Executed\n \n"
 
     elif [[ "$line" == "${user_make}" ]]; then
 
         Command5="${user_start}"
         echo "Creating user: ${bold}${lightblue}${Command5}"
-        eval "cd /home/container/painel && $Command5 && cd .."
+        eval "cd /home/container/panel && $Command5 && cd .."
         printf "\n \n✅  Command Executed\n \n"
 
     elif [[ "$line" == "${yarn}" ]]; then
@@ -112,11 +113,11 @@ while read -r line; do
         echo "Building panel: ${bold}${lightblue}${Command6}"
         echo -e "\n \n⚠️  At least 2 GB of RAM are required"
         echo -e "📃  Available RAM: ${bold}${lightblue}${SERVER_MEMORY} MB\n \n"
-        eval "cd /home/container/painel && $Command6 && cd .."
+        eval "cd /home/container/panel && $Command6 && cd .."
         printf "\n \n✅  Command Executed\n \n"
 
     elif [[ "$line" == "reinstall" ]]; then
-        echo -e "❗️  \e[1m\e[94mThis Command requires an option, use:\n \n${bold}${lightblue}reinstall all ${normal}(reinstall panel, nginx, php-fpm)\n \n${bold}${lightblue}reinstall painel ${normal}(reinstall only the panel)\n \n${bold}${lightblue}reinstall nginx ${normal}(reinstall only nginx) \n \n${bold}${lightblue}reinstall php-fpm ${normal}(reinstall only php-fpm)"
+        echo -e "❗️  \e[1m\e[94mThis Command requires an option, use:\n \n${bold}${lightblue}reinstall all ${normal}(reinstall panel, nginx, php-fpm)\n \n${bold}${lightblue}reinstall panel ${normal}(reinstall only the panel)\n \n${bold}${lightblue}reinstall nginx ${normal}(reinstall only nginx) \n \n${bold}${lightblue}reinstall php-fpm ${normal}(reinstall only php-fpm)"
 
     elif [[ "$line" == "${reinstall_a}" ]]; then
 

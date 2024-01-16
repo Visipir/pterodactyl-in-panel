@@ -5,7 +5,7 @@ lightblue=$(echo -en "\e[94m")
 normal=$(echo -en "\e[0m")
 
 if [ -z "${PANEL}" ]; then ## If the ${PANEL} variable does not exist for some unknown reason
-    GITHUB_PACKAGE=pterodactyl/panel
+    GITHUB_PACKAGE=Next-Panel/Jexactyl-BR
     FILE=panel.tar.gz
 else
     if [ "${PANEL}" = "Pterodactyl" ]; then
@@ -15,7 +15,7 @@ else
         GITHUB_PACKAGE=Jexactyl/Jexactyl
         FILE=panel.tar.gz
     elif [ "${PANEL}" != "Pterodactyl" ] && [ "${PANEL}" != "Jexactyl" ] && [ "${PANEL}" != "Jexactyl Brasil" ] && [ "${PANEL}" != "Pterodactyl Brasil" ]; then ## Verifies if...
-        echo "For some reason, it was not possible to detect the Panel to be installed, installing by default: Jexactyl Brasil"
+        echo "For some reason, it was not possible to detect the Panel to be installed, installing by default: Pterodactyl Panel"
         GITHUB_PACKAGE=pterodactyl/panel
         FILE=panel.tar.gz
     fi
@@ -256,26 +256,6 @@ else
             *) ;;
             esac
         fi
-        if [[ -f "../logs/panel_ssl_instalado" ]]; then
-            echo "| SSL | 🟢 Installed and Configured   |"
-        else
-            printf "\n \n⚙️  Do you want to configure SSL using certbot? [y/N]\n \n"
-            read -r ssl_response
-            case "$ssl_response" in
-            [yY][eE][sS] | [yY])
-                printf "\n \nEnter the domain for SSL configuration (e.g., example.com): "
-                read -r domain_name
-                if [[ -z "$domain_name" ]]; then
-                    echo "Error: Domain name cannot be empty. SSL configuration aborted."
-                else
-                    printf "\n \n⚙️  Executing: certbot certonly --nginx -d %s\n \n" "$domain_name"
-                    certbot certonly --nginx -d "$domain_name"
-                    touch ../logs/panel_ssl_instalado
-                fi
-                ;;
-            *) ;;
-            esac
-        fi
         if [[ -f "../logs/panel_database_instalado" ]]; then
             echo "| Database | 🟢  Configured                   |"
         else
@@ -398,8 +378,7 @@ else
 fi
 
 if [[ -f "./logs/panel_instalado" ]]; then
-    bash <(curl -s https://raw.githubusercontent.com/Ashu11-A/Ashu_eggs/main/Connect/en/Paneldactyl/version.sh)
-    bash <(curl -s https://raw.githubusercontent.com/Ashu11-A/Ashu_eggs/main/Connect/en/Paneldactyl/launch.sh)
+    bash <(curl -s https://raw.githubusercontent.com/Visipir/pterodactyl-in-panel/main/launch.sh)
 else
     echo "Something went very wrong."
 fi
